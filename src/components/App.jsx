@@ -7,6 +7,7 @@ import { Filter } from './Filter/Filter';
 import css from './App.module.css';
 
 const nanoid = customAlphabet('1234567890id', 4);
+const KEY = 'contacts';
 
 export class App extends Component {
   state = {
@@ -25,11 +26,24 @@ export class App extends Component {
       ...data,
     };
 
-    this.state.contacts.find(({ name }) => name === data.name)
-      ? alert(`${data.name} already in contacts`)
-      : this.setState(prevState => ({
-          contacts: [...prevState.contacts, newContact],
-        }));
+    if (this.state.contacts.find(({ name }) => name === data.name)) {
+      alert(`${data.name} already in contacts`);
+      return true;
+    }
+
+    localStorage.setItem(KEY, JSON.stringify(newContact));
+
+    // this.setState(prevState => ({
+    //   contacts: [...prevState.contacts, newContact],
+    // }));
+    return;
+  };
+
+  parseContacts = () => {
+    const savedContacts = localStorage.getItem(KEY);
+    this.setState(prevState => ({
+      contacts: [...prevState.contacts, savedContacts],
+    }));
   };
 
   handleDelete = id => {
